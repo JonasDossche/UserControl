@@ -30,7 +30,7 @@ class IndexController extends Zend_Controller_Action
 				$pw = $form->getValue('pw');
 				
 				$authAdapter->setIdentity($email)
-				->setCredential($pw);
+				->setCredential(md5($pw));
 				 
 				$auth = Zend_Auth::getInstance();
 								

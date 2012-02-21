@@ -107,7 +107,7 @@ class ContentController extends Zend_Controller_Action
 	
 	public function overviewAction()
 	{		
-		$page = ($this->getRequest()->getParam('page')!= null) ? $this->getRequest()->getParam('page') : 0;
+		$page = $this->getRequest()->getParam('page',0);
 		$searchValue =($this->getRequest()->getParam('search')!= null) ? $this->getRequest()->getParam('search') : '';
 		$users = new Application_Model_UserMapper();
 		

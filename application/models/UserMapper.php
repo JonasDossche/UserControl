@@ -75,12 +75,9 @@ class Application_Model_UserMapper {
 			$query->where('mail LIKE ?', '%'.$value.'%')
 				->orWhere('name LIKE ?', '%'.$value.'%')
 				->orWhere('firstName LIKE ?', '%'.$value.'%');
-		$query
-				->order('name ASC')
+			$query->order('name ASC')
 				->limit($limit,$start);
-		$result = $this->getDbTable()->fetchAll(
-	$query
-		);
+		$result = $this->getDbTable()->fetchAll($query);
 		
 		$users = array();
 		foreach($result as $row) {
@@ -91,25 +88,12 @@ class Application_Model_UserMapper {
 		return $users;
 	}
 	
-	public function checkLogin($email, $pw) {
-		$row = $this->getDbTable()->fetchRow($this->getDbTable()->select()
-    								->where('mail = ?', $email)
-    								->where('password = ?', $pw)); 
-		
-		if(!$row) {
-			return null;			
-		} else {
-			return $row->id;
-		}
-		
-	}
-	
 	public function addUser(Application_Model_User $user) {
 		$data = array(
 			'name'   => $user->getName(),
 			'firstName' => $user->getFirstName(),
 			'mail' => $user->getEmail(),
-			'password' => $user->getPw()
+			'password' => md5($user->getPw())
 		);
 		
 		$this->getDbTable()->insert($data);
@@ -128,10 +112,10 @@ class Application_Model_UserMapper {
 		);
 		
 		if(($pw = $user->getPw()) !== null and $pw != '') {
-			$data += array('password' => $pw);
+			$data += array('password' => md5($pw));
 		}
 		
-		$this->getDbTable()->update($data, array('id = ?' => $id));		
+		$this->getDbTable()->update($data, array('id = ?' => (int) $id));		
 	}
 	
 	public function deleteUser($id) {
@@ -147,32 +131,6 @@ class Application_Model_UserMapper {
 		} else {
 			return $row->id;
 		}
-	}	
-	
-	public function count() {
-		$result = $this->getDbTable()->fetchRow(
-				$this->getDbTable()->select()				
-				->from($this->getDbTable(), 'COUNT(*)')
-		);
-			
-		$count =$result['COUNT(*)'];
-		return $count;
-	}
-	
-	public function authenticate($email,$pw) {
-		$dbAdapter = $this->getDbTable()->getAdapter();		
-		$authAdapter = new Zend_Auth_Adapter_DbTable($dbAdapter);
-		
-		$authAdapter->setTableName('users')
-		->setIdentityColumn('mail')
-		->setCredentialColumn('password');
-		
-		$authAdapter->setIdentity($email)
-		->setCredential($pw);
-				
-		$auth = Zend_Auth::getInstance();		
-		$result = $auth->authenticate($authAdapter);
-		return $result;
 	}
 	
 }
