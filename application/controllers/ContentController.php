@@ -122,8 +122,7 @@ class ContentController extends Zend_Controller_Action
 			
 		}		
 	
-		$paginator = new Zend_Paginator(new Zend_Paginator_Adapter_Array($users->searchUsers($searchValue)));
-		
+		$paginator = new Zend_Paginator(new Zend_Paginator_Adapter_Array($users->searchUsers($searchValue)));		
 		
 		$paginator->setItemCountPerPage(5);
 		$paginator->setCurrentPageNumber($page);

@@ -70,13 +70,14 @@ class Application_Model_UserMapper {
 	}
 	
 	public function searchUsers($value, $start = 0, $limit = 0) {
-		$query = 				$this->getDbTable()->select();
+		$query = $this->getDbTable()->select();
 		if ( !empty($value) )
 			$query->where('mail LIKE ?', '%'.$value.'%')
 				->orWhere('name LIKE ?', '%'.$value.'%')
 				->orWhere('firstName LIKE ?', '%'.$value.'%');
 			$query->order('name ASC')
 				->limit($limit,$start);
+			
 		$result = $this->getDbTable()->fetchAll($query);
 		
 		$users = array();
