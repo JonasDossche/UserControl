@@ -17,12 +17,15 @@ class Application_Form_Add extends Zend_Form
 			->addFilter('StripTags')
 			->addFilter('StringTrim');
 		
+		
+		$validator = new Zend_Validate_Db_NoRecordExists('users', 'mail');
 		$email = new Zend_Form_Element_Text('email');
 		$email->setLabel('Email: ')
 			->setRequired(true)
 			->addFilter('StripTags')
 			->addFilter('StringTrim')
-			->addValidator('EmailAddress');
+			->addValidator('EmailAddress')
+			->addValidator($validator);
 		
 		 $pw = new Zend_Form_Element_Password('pw');
 		 $pw->setLabel('Password: ')

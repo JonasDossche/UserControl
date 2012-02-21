@@ -22,12 +22,6 @@ class ContentController extends Zend_Controller_Action
 				$pw = $form->getValue('pw');
 				
 				$users = new Application_Model_UserMapper();
-				
-				if($users->emailExists($email)!= null) {
-					$this->view->error = "This email is already registered";
-					return;
-				}
-				
 				$user = new Application_Model_User(null, $name, $firstName,$pw,$email);
 	
 				$users->addUser($user);
