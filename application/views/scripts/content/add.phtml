@@ -1,0 +1,33 @@
+<style>
+	form dl {		
+		display: block;
+		width: 300px;
+		margin: 0px auto;
+	}
+	
+	form dl dt {
+		display: block;
+		float: left;
+		width: 150px;
+	}
+	
+	form dl dt, form dl dd {
+		display: block;
+		heigth: 40px;
+		line-height: 40px;	
+	}	
+	
+	p#errors {
+		color: red;
+		display: block;
+		width: 100%;
+		text-align: center;	
+	}
+	
+</style>
+<div id="add">
+	<p id="errors">
+		<?php echo $this->error; ?>
+	</p>
+	<?php echo $this->form->render(); ?>
+</div>

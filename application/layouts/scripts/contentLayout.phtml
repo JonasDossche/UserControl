@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UserControl System</title>
+    <style>
+		body {
+			Font-family: Calibri, Verdana, Ariel, sans-serif;	
+		}
+		
+		ul#menu {
+			width: 600px;
+			display: block;
+			position: absolute;
+		    top: 0px;
+		    left: 50%;
+			margin-left: -300px; 			
+			background-color: gray;	
+			float: right;	
+			margin-top: 0px;		
+		}
+		
+		ul#menu li {
+			list-style: none;
+			float: left;
+			width: 100px;	
+			background-color: gray;			
+		}
+		
+		ul#menu li#logout {
+			list-style: none;
+			position: absolute;
+			right: 0px;
+			width: 100px;	
+			background-color: gray;			
+		}
+		
+		
+		ul#menu li a {
+			text-decoration: none;
+			font-weight: bold;
+			color: white;
+		}
+		
+		div#content {
+			margin-top: 40px;	
+		}
+		
+	</style>
+</head>
+<body>
+	<ul id="menu">
+		<li><a href="<?php echo $this->url(array('controller'=>'content','action'=>'overview','page' => '1', 'search' =>null));?>">Overview</a></li>
+		<li><a href="<?php echo $this->url(array('controller'=>'content','action'=>'add'));?>">Add user</a></li>
+		<li id="logout"><a href="<?php echo $this->url(array('controller'=>'content','action'=>'logout'));?>">logout</a></li>
+	</ul>
+	<div id="content">
+		<?php echo $this->layout()->content; ?>
+	</div>
+</body>
+</html>

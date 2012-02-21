@@ -1,0 +1,51 @@
+<style>
+	div#login {
+		margin-top: 50px;
+		display:block;
+		width: 500px;
+		height: 300px;
+		margin: 0px auto;
+		border: 2px solid black;
+		padding-left: 10px;
+	}
+	
+	form dl {		
+		display: block;
+		width: 300px;
+		margin: 0px auto;
+	}
+	
+	form dl dt {
+		display: block;
+		float: left;
+		width: 100px;
+	}
+	
+	form dl dt, form dl dd {
+		display: block;
+		heigth: 40px;
+		line-height: 40px;	
+	}	
+	
+	p#forgot {
+		display:block;
+		width: 500px;
+		text-align: center;	
+	}
+	
+	p#errors {
+		color: red;	
+	}
+
+</style>
+<div id="login">
+	<h1>Login</h1>
+	<p id="errors">
+		<?php echo $this->error; ?>
+	</p>
+    <?php echo $this->form->render(); ?>
+    
+    <p id="forgot">
+    	<a href="<?php echo $this->url(array('controller'=>'index','action'=>'password')); ?>" >Forgot password? </a>
+    </p>
+</div>

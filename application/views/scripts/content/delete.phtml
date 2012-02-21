@@ -1,0 +1,19 @@
+<style>
+	div#delete {
+		width: 600px;
+		margin: 0 auto;
+	}
+</style>
+
+<div id="delete">
+	<p>Are you sure that you want to delete
+	<?php echo $this->escape($this->user->getName()); ?> <?php echo $this->escape($this->user->getFirstName()); ?>?
+	</p>
+	<form action="<?php echo $this->url(array('action'=>'delete')); ?>" method="post">
+		<fieldset>
+			<input type="hidden" name="id" value="<?php echo $this->user->getId(); ?>" />
+			<input type="submit" name="del" value="Yes" />
+			<input type="submit" name="del" value="No" />
+		</fieldset>
+	</form>
+</div>
