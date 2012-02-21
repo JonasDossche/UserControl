@@ -108,12 +108,9 @@ class ContentController extends Zend_Controller_Action
 	public function overviewAction()
 	{		
 		$page = $this->getRequest()->getParam('page',0);
-		$searchValue =($this->getRequest()->getParam('search')!= null) ? $this->getRequest()->getParam('search') : '';
+		$searchValue = $this->getRequest()->getParam('search', null);
 		$users = new Application_Model_UserMapper();
-		
-		$paginator = '';
-		
-		
+				
 		$form = new Application_Form_Search();
 		
 		if ($this->getRequest()->isPost()) {
@@ -123,13 +120,10 @@ class ContentController extends Zend_Controller_Action
 				$this->_helper->redirector('overview','content',null, array('search'=>$form->getValue('search')));				
 			}
 			
-		}
+		}		
+	
+		$paginator = new Zend_Paginator(new Zend_Paginator_Adapter_Array($users->searchUsers($searchValue)));
 		
-		if ($searchValue != '' || $searchValue != null) {
-			$paginator = new Zend_Paginator(new Zend_Paginator_Adapter_Array($users->searchUsers($searchValue)));
-		} else {
-			$paginator = new Zend_Paginator(new Zend_Paginator_Adapter_Array($users->getAllUsers()));
-		}
 		
 		$paginator->setItemCountPerPage(5);
 		$paginator->setCurrentPageNumber($page);
