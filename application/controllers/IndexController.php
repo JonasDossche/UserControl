@@ -2,22 +2,16 @@
 
 class IndexController extends Zend_Controller_Action
 {
-
+	private $em;
+	
     public function init()
-    {    	        
+    {        	
+    	$this->em = $this->getInvokeArg('bootstrap')->getResource('doctrine');    	 	
     }
 
     public function indexAction()
-    {	    
-    	$users = new Application_Model_UserMapper();
-    	
-    	$dbAdapter = $users->getDbTable()->getAdapter();
-    	$authAdapter = new Zend_Auth_Adapter_DbTable($dbAdapter);
-    	
-    	$authAdapter->setTableName('users')
-    	->setIdentityColumn('mail')
-    	->setCredentialColumn('password');    	
-    	
+    {	      	
+    	$users = new Application_Model_UserMapper();    	
     	
 		$form = new Application_Form_Login();		
 		$this->view->form = $form;
@@ -28,17 +22,21 @@ class IndexController extends Zend_Controller_Action
 			if ($form->isValid($formData)) {
 				$email = $form->getValue('username');
 				$pw = $form->getValue('pw');
+									
+				$user = $this->em->getRepository('Entities\User')->Authenticate($email, md5($pw));
 				
-				$authAdapter->setIdentity($email)
-				->setCredential(md5($pw));
-				 
-				$auth = Zend_Auth::getInstance();
+				$result = '';
 								
-				if($auth->authenticate($authAdapter)->isValid()) {					
-					$this->_helper->redirector('overview', 'content', null, array('page' => 0));
-				} else {					
-					$this->view->error = "Wrong Email and password combination.";
-				}
+				if($user) {
+					 //login correct
+				     $result = new Zend_Auth_Result(Zend_Auth_Result::SUCCESS,$user->getId(),array()); 
+				     Zend_Auth::getInstance()->getStorage()->write($user);
+				     $this->_helper->redirector('overview', 'content', null, array('page' => 1));
+        		}else {
+        			//login failed
+            		$result =  new Zend_Auth_Result(Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID,null,array());
+            		$this->view->error = "Wrong Email and password combination.";
+				}								
 			}
 		}		
     } 
@@ -52,32 +50,30 @@ class IndexController extends Zend_Controller_Action
     		$formData = $this->getRequest()->getPost();
     			
     		if ($form->isValid($formData)) {
+    			
 	    		$email = $form->getValue('email');
 	    		
 	    		$users = new Application_Model_UserMapper();
 	    		
-	    		if(($id = $users->emailExists($email)) != null) {
-	    			$npw = $this->generatePass();
-	    			
-	    			$user = $users->getUser($id);
-	    			$user->setPw($npw);
-	    			$users->editUser($user);	    			
-	    				    			
-	    			Zend_Mail::setDefaultFrom('noreply@marlon.be', 'No reply');
-	    			$transport = new Zend_Mail_Transport_Smtp('uit.telenet.be');
-	    			
-	    			$mail = new Zend_Mail();
-	    			$mail->addTo($email);
-	    			
-	    			$mail->setSubject('New password');
-	    			$mail->setBodyText('password: ' .  $npw);
-	    			$mail->send($transport);
-	    			
-	    			$this->_helper->redirector('passwordsend');
-	    		} else {	    			
-	    			$this->view->error = 'The email was not found in the database';
-	    		}
-    		}
+    			$npw = $this->generatePass();
+    			
+    			$user = $this->em->getRepository('Entities\User')->findOneByMail($email);    
+    			$user->setPw(md5($npw));	
+    			$this->em->flush();			    			
+    				    			
+    			Zend_Mail::setDefaultFrom('noreply@marlon.be', 'No reply');
+    			$transport = new Zend_Mail_Transport_Smtp('uit.telenet.be');
+    			
+    			$mail = new Zend_Mail();
+    			$mail->addTo($email);
+    			
+    			$mail->setSubject('New password');
+    			$mail->setBodyText('password: ' .  $npw);
+    			$mail->send($transport);
+    			
+    			$this->_helper->redirector('passwordsend');
+	    		
+    		} 
     	}
     }
     

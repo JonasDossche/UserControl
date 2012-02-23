@@ -15,7 +15,7 @@ class Application_Form_Edit extends Zend_Form
 		$firstName->setLabel('First name: ')
 			->setRequired(true)
 			->addFilter('StripTags')
-			->addFilter('StringTrim');
+			->addFilter('StringTrim');		
 		
 		$email = new Zend_Form_Element_Text('mail');
 		$email->setLabel('Email: ')
@@ -24,6 +24,11 @@ class Application_Form_Edit extends Zend_Form
 			->addFilter('StringTrim')
 			->addValidator('EmailAddress');
 		
+		$groups = new Zend_Form_Element_Text('groups');
+		$groups->setLabel('Groups: ')
+				->setRequired(true)
+				->addFilter('StripTags')
+				->addFilter('StringTrim');		
 		
 		 $pw = new Zend_Form_Element_Password('pw');
 		 $pw->setLabel('Password: ')			
@@ -40,7 +45,7 @@ class Application_Form_Edit extends Zend_Form
 		 $submit = new Zend_Form_Element_Submit('Edit');
 		 
 		 
-		 $this->addElements(array($name,$firstName,$email,$pw,$pwConfirm,$submit));
+		 $this->addElements(array($name,$firstName,$email,$groups,$pw,$pwConfirm,$submit));
 	}
 }
 ?>

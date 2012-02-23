@@ -123,15 +123,17 @@ class Application_Model_UserMapper {
 		$this->getDbTable()->delete('id =' . (int) $id);
 	}
 	
-	public function emailExists($email) {
+	public function getUserByEmail($email) {
 		$row = $this->getDbTable()->fetchRow($this->getDbTable()->select()
-				->where('mail = ?', $email));
+				->where('mail = ?', $email));		
 		
 		if(!$row) {
-			return null;
-		} else {
-			return $row->id;
+			throw new Exception("User not found");
 		}
+		
+		$user = New Application_Model_User($row->id,$row->name,$row->firstName,$row->password,$row->mail);	
+		
+		return $user;
 	}
 	
 }

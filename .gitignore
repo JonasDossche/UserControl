@@ -1,1 +1,4 @@
 doctrine/*
+.settings/*
+.project
+.zfproject.xml

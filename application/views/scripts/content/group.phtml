@@ -1,0 +1,17 @@
+<style>
+	div#group dl {
+		display: block;
+		width: 600px;
+		margin: 0 auto;
+	}
+</style>
+<div id="group">			
+    <dl>
+    	<dt><?php echo $this->group->getName(); ?><dt>		   
+			<?php foreach ($this->group->getUsers() as $user): ?> 
+				
+		    	<dd><?php echo $user->getName(). " ". $user->getFirstName();?></dd>
+		    <?php endforeach ?>      
+	</dl>
+	
+</div>

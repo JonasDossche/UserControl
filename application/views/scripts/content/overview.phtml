@@ -65,6 +65,7 @@
 			<th>Name</th>
 			<th>First name</th>
 			<th>Email</th>
+			<th>Groups</th>
 			<th>Actions</th>
 		</tr>
     <?php foreach ($this->paginator as $user): ?>
@@ -72,6 +73,12 @@
 		    <td><?php echo $this->escape($user->getName()); ?></td>
 		    <td><?php echo $this->escape($user->getFirstName()); ?></td>
 		    <td><?php echo $this->escape($user->getEmail()); ?></td>
+		    <td>
+		    	<?php foreach ($user->getGroups() as $group): ?> 
+		    		<a href="<?php echo $this->url(array('controller'=>'content','action'=>'group', 'id'=>$group->getId(), 'page' => null, 'search' =>null));?>"><?php echo $group->getName()?></a>
+		    	<?php endforeach ?> 
+		    	
+		    </td>
 		    <td>
 		    	<a href="<?php echo $this->url(array('controller'=>'content','action'=>'edit', 'id'=>$user->getId(), 'page' => null, 'search' =>null));?>">Edit</a>
 				<a href="<?php echo $this->url(array('controller'=>'content','action'=>'delete', 'id'=>$user->getId(), 'page' => null, 'search' =>null));?>">Delete</a>
