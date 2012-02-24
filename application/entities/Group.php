@@ -1,6 +1,8 @@
 <?php
 namespace Entities;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * @Entity(repositoryClass="Repositories\GroupRepository")
  * @Table(name="groups")
@@ -24,6 +26,10 @@ class Group {
 	 */
 	private $users;
 	
+	public function __construct() {
+		$this->users = new ArrayCollection();
+	}
+	
 	public function getId() {
 		return $this->id;
 	}
@@ -38,6 +44,23 @@ class Group {
 	
 	public function getUsers() {
 		return $this->users;
+	}
+	
+	public function removeAllUsers() {
+// 		/foreach($this->users as $user) {
+			//$user->removeGroup($this);
+		//}
+		$this->users = new ArrayCollection();		
+	}
+	
+	public function addUser(User $user) {
+		if(!$user->hasGroup($this)) {
+			$user->addGroup($this);
+		}
+	}
+	
+	public function removeUser(User $user) {
+		$user->removeElement($this);		
 	}
 
 }

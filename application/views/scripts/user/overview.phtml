@@ -1,0 +1,93 @@
+<style>
+	div#overview td {	
+		min-width: 120px;	
+		border-bottom: 1px solid black;
+		height: 30px;
+		line-height: 30px;		
+	}
+	
+	div#overview th {
+		text-align: left;	
+	}
+	
+	table {
+		margin: 0px auto;	
+		float: none;
+	}
+	
+	ul#pages {
+		text-align: center;
+		display: block;
+		width: 600px;				
+		margin: 0 auto;	
+		padding-top: 10px;
+	}
+	
+	ul#pages li {
+		padding: 5px;
+		display: inline;		
+		list-style: none;	
+	}
+	
+	li#current {
+		font-weight: bold;	
+	}
+	
+	dl.zend_form {
+		padding-bottom: 10px;
+		display: block;
+		width: 600px;		
+		margin: 0 auto;	
+		float: none;
+		
+	}
+	
+	dl.zend_form dd, dl.zend_form dt {
+		display: inline;
+	 	float:none;	
+	}
+	
+	#error {
+		color: red;
+		width: 100%;
+		text-align: center;	
+	}
+	
+</style>
+<div id="overview">
+	<p id="error">
+		<?php echo $this->error?>
+	</p>
+	
+	<?php echo $this->form->render(); ?>
+	<table>
+		<tr>
+			<th>Name</th>
+			<th>First name</th>
+			<th>Email</th>
+			<th>Groups</th>
+			<th>Actions</th>
+		</tr>
+    <?php foreach ($this->paginator as $user): ?>
+    	<tr>
+		    <td><?php echo $this->escape($user->getName()); ?></td>
+		    <td><?php echo $this->escape($user->getFirstName()); ?></td>
+		    <td><?php echo $this->escape($user->getEmail()); ?></td>
+		    <td>
+		    	<?php foreach ($user->getGroups() as $group): ?> 
+		    		<?php echo $group->getName() . "";?>
+		    	<?php endforeach ?> 
+		    	
+		    </td>
+		    <td>
+		    	<a href="<?php echo $this->url(array('controller'=>'user','action'=>'edit', 'id'=>$user->getId(), 'page' => null, 'search' =>null));?>">Edit</a>
+				<a href="<?php echo $this->url(array('controller'=>'user','action'=>'delete', 'id'=>$user->getId(), 'page' => null, 'search' =>null));?>">Delete</a>
+		    </td>
+    	</tr>
+    <?php endforeach ?>   
+	</table>
+	<?php echo $this->paginationControl($this->paginator,'Sliding','paging.phtml'); ?>
+                                    
+	
+	
+</div>

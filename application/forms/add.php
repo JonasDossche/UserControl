@@ -3,6 +3,9 @@ use Validators\RecordNotExistsValidator;
 
 class Application_Form_Add extends Zend_Form
 {
+	private $groups;
+	private $em;
+		
 	public function init() 
 	{		
 		$this->setName('Add');
@@ -20,7 +23,7 @@ class Application_Form_Add extends Zend_Form
 			->addFilter('StringTrim');
 		
 		
-		$er = Zend_Registry::get('EntityManager')->getRepository('Entities\User');		
+		$er = $this->em->getRepository('Entities\User');		
 		$validator = new RecordNotExistsValidator($er, 'mail');
 		$email = new Zend_Form_Element_Text('email');
 		$email->setLabel('Email: ')
@@ -30,11 +33,14 @@ class Application_Form_Add extends Zend_Form
 			->addValidator('EmailAddress')
 			->addValidator($validator);
 		
-		$groups = new Zend_Form_Element_Text('groups');
-		$groups->setLabel('Groups: ')
-			->setRequired(true)
-			->addFilter('StripTags')
-			->addFilter('StringTrim');
+		$groups = new Zend_Form_Element_MultiCheckbox('groups');
+		$groups->setLabel('Groups:')
+		       ->setRequired(true);
+		
+		foreach ($this->groups as $group) {
+			$groups->addMultiOption($group->getId(), $group->getName());
+		}
+			
 				
 		 $pw = new Zend_Form_Element_Password('pw');
 		 $pw->setLabel('Password: ')
@@ -53,6 +59,15 @@ class Application_Form_Add extends Zend_Form
 		 
 		 
 		 $this->addElements(array($name,$firstName,$email,$groups,$pw,$pwConfirm,$submit));
+	}
+	
+	public function setGroups($groups)
+	{
+		$this->groups = $groups;
+	}
+	
+	public function setEntityManager($em) {
+		$this->em = $em;
 	}
 }
 ?>

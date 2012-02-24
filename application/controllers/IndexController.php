@@ -21,22 +21,20 @@ class IndexController extends Zend_Controller_Action
 			
 			if ($form->isValid($formData)) {
 				$email = $form->getValue('username');
-				$pw = $form->getValue('pw');
-									
-				$user = $this->em->getRepository('Entities\User')->Authenticate($email, md5($pw));
+				$pw = $form->getValue('pw');				
 				
-				$result = '';
-								
-				if($user) {
-					 //login correct
-				     $result = new Zend_Auth_Result(Zend_Auth_Result::SUCCESS,$user->getId(),array()); 
-				     Zend_Auth::getInstance()->getStorage()->write($user);
-				     $this->_helper->redirector('overview', 'content', null, array('page' => 1));
-        		}else {
-        			//login failed
-            		$result =  new Zend_Auth_Result(Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID,null,array());
-            		$this->view->error = "Wrong Email and password combination.";
-				}								
+				try {
+					//login succesfull
+					$user = $this->em->getRepository('Entities\User')->Authenticate($email, md5($pw));
+					$result = new Zend_Auth_Result(Zend_Auth_Result::SUCCESS,$user->getId(),array());
+					Zend_Auth::getInstance()->getStorage()->write($user);
+					$this->_helper->redirector('overview', 'group', null, array('page' => 1));
+				} catch (Exception $e) {
+					//login failed
+					$result =  new Zend_Auth_Result(Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID,null,array());
+					$this->view->error = "Wrong Email and password combination.";
+				}
+											
 			}
 		}		
     } 
@@ -75,6 +73,12 @@ class IndexController extends Zend_Controller_Action
 	    		
     		} 
     	}
+    }
+    
+    public function logoutAction()
+    {
+    	Zend_Auth::getInstance()->clearIdentity();
+    	$this->_helper->redirector('index', 'index');
     }
     
     public function passwordsendAction() {

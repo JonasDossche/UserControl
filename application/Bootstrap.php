@@ -5,8 +5,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	public function _initAutoload()  {
 		//Register plugin namespace
 		$autoloader = Zend_Loader_Autoloader::getInstance();
-		$autoloader->registerNamespace('Plugin_');		
-		
+		$autoloader->registerNamespace('Plugin_');			
 		
 		//Register doctrine namespaces
 		$doctrineConfig = $this->getOption('doctrine');

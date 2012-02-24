@@ -2,6 +2,7 @@
 namespace Entities;
 
 use Entities\Group;
+use Doctrine\Common\Collections\ArrayCollection;
 /**
  * @Entity(repositoryClass="Repositories\UserRepository")
  * @Table(name="users")
@@ -42,7 +43,7 @@ class User {
 	private $groups;
 	
 	public function __construct() {
-		$this->groups = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->groups = new ArrayCollection();
 	}
 	
 	public function getId() {
@@ -90,15 +91,21 @@ class User {
 			$this->groups->add($group);
 		}
 	}
+		
+	public function removeGroup(Group $group) {
+		$this->groups->removeElement($group);
+	}
 	
 	public function removeAllGroups() {
-		foreach($this->groups as $group) {
-			$this->groups->removeElement($group);
-		}
+		$this->groups->clear();
 	}
 	
 	public function getGroups() {
 		return $this->groups;
+	}
+	
+	public function hasGroup(Group $group) {
+		return $this->groups->contains($group);
 	}
 }
 ?>

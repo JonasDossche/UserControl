@@ -1,6 +1,12 @@
 <?php
+use Entities\Group;
+use Entitie\User;
+
 class Application_Form_Edit extends Zend_Form
 {
+	private $groups;
+	private $user;
+	
 	public function init() 
 	{
 		$this->setName('Edit');
@@ -30,6 +36,22 @@ class Application_Form_Edit extends Zend_Form
 				->addFilter('StripTags')
 				->addFilter('StringTrim');		
 		
+		$groups = new Zend_Form_Element_MultiCheckbox('groups');
+		$groups->setLabel('Groups:')
+		->setRequired(true);
+		
+		$checked = array();
+		
+		foreach ($this->groups as $group) {
+			if($this->user->hasGroup($group)) {
+				$checked[] = $group->getId();
+			}
+			
+			$groups->addMultiOption($group->getId(), $group->getName());
+		}
+		
+		$groups->setValue($checked);
+		
 		 $pw = new Zend_Form_Element_Password('pw');
 		 $pw->setLabel('Password: ')			
 			->addFilter('StripTags')
@@ -46,6 +68,14 @@ class Application_Form_Edit extends Zend_Form
 		 
 		 
 		 $this->addElements(array($name,$firstName,$email,$groups,$pw,$pwConfirm,$submit));
+	}
+	
+	public function setGroups($groups) {
+		$this->groups = $groups;
+	}
+	
+	public function setUser($user) {
+		$this->user = $user;
 	}
 }
 ?>
