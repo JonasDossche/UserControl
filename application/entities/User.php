@@ -75,7 +75,7 @@ class User {
 	}
 
 	public function setPw($pw) {
-		$this->pw = $pw;
+		$this->pw = md5($pw);
 	}
 
 	public function getEmail() {

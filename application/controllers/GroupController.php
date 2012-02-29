@@ -5,12 +5,14 @@ use Entities\Group;
 class GroupController extends Zend_Controller_Action
 {	
 	private $groupRep;
+	private $userRep;
 	private $em;
 	
 	public function init()
 	{
 		$this->em = $this->getInvokeArg('bootstrap')->getResource('doctrine');
 		$this->groupRep = $this->em->getRepository('Entities\Group');
+		$this->userRep = $this->em->getRepository('Entities\User');
 		$this->_helper->layout->setLayout('contentlayout');	
 	}
 	
@@ -18,8 +20,15 @@ class GroupController extends Zend_Controller_Action
 	{		
 		$page = $this->getRequest()->getParam('page',0);
 		$searchValue = $this->getRequest()->getParam('search', null);
-						
-		$form = new Application_Form_Search();
+
+		$users = $this->groupRep->findAll();
+		$source = array();
+		
+		foreach($users as $user) {
+			$source[] = $user->getName();
+		}
+		
+		$form = new Application_Form_Search(array('source'=>$source));
 		
 		if ($this->getRequest()->isPost()) {
 			$formData = $this->getRequest()->getPost();
@@ -30,7 +39,7 @@ class GroupController extends Zend_Controller_Action
 			
 		}		
 		
-		$paginator = new Zend_Paginator(new Zend_Paginator_Adapter_Array($this->em->getRepository('Entities\Group')->searchGroups($searchValue)));		
+		$paginator = new Zend_Paginator(new Zend_Paginator_Adapter_Array($this->groupRep->searchGroups($searchValue)));		
 		
 		$paginator->setItemCountPerPage(5);
 		$paginator->setCurrentPageNumber($page);
@@ -46,7 +55,7 @@ class GroupController extends Zend_Controller_Action
 	
 			if ($del == 'Yes') {
 				$id = $this->getRequest()->getPost('id');
-				$group = $this->em->getRepository('Entities\Group')->findOneById($id);
+				$group = $this->groupRep->findOneById($id);
 				$this->em->remove($group);
 				$this->em->flush();
 			}
@@ -54,7 +63,7 @@ class GroupController extends Zend_Controller_Action
 			$this->_helper->redirector('overview', 'group', null, array('page' => 1));
 		} else {
 			$id = $this->_getParam('id', 0);
-			$this->view->group = $this->em->getRepository('Entities\Group')->findOneById($id);
+			$this->view->group = $this->groupRep->findOneById($id);
 		}
 	}
 	
@@ -89,7 +98,7 @@ class GroupController extends Zend_Controller_Action
 		}
 		
 		$usersForm = array();		
-		$users = $this->em->getRepository('Entities\User')->findAll();
+		$users = $this->userRep->findAll();
 		$group = $this->groupRep->findOneById($id);
 		$usersInGroup = $group->getUsers();
 		
@@ -108,16 +117,12 @@ class GroupController extends Zend_Controller_Action
 				$group->setName($form->getValue('name'));	
 				
 				$group->removeAllUsers();
-				
-				$this->em->flush();			
-				//var_dump($group->getUsers());
-				//die();
-				
+							
 				$userIds = $form->getValue('hidden');				
 				$ids = ($userIds!="" || $userIds!= null) ? explode(",", $userIds) : array();				
 								
 				foreach ($ids as $uid) {					
-					$user = $this->em->getRepository('Entities\User')->findOneById($uid);									
+					$user = $this->userRep->findOneById($uid);									
 					$group->addUser($user);
 				}
 				

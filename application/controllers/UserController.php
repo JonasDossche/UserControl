@@ -5,40 +5,37 @@ use Entities\Group;
 class UserController extends Zend_Controller_Action
 {
 	private $userRep;
+	private $groupRep;
 	private $em;
 	
 	public function init()
 	{
 		$this->em = $this->getInvokeArg('bootstrap')->getResource('doctrine');
 		$this->userRep = $this->em->getRepository('Entities\User');
-		$this->_helper->layout->setLayout('contentlayout');
-		
+		$this->groupRep = $this->em->getRepository('Entities\Group');
+		$this->_helper->layout->setLayout('contentlayout');		
 	}
 	
 	public function addAction()
 	{		
-		$groups = $this->em->getRepository('Entities\Group')->findAll();
+		$groups = $this->groupRep->findAll();
 		$form = new Application_Form_Add(array('groups' => $groups, 'Entitymanager' => $this->em));
 		$this->view->form = $form;
 	
 		if ($this->getRequest()->isPost()) {
 			$formData = $this->getRequest()->getPost();
 	
-			if ($form->isValid($formData)) {
-				$name = $form->getValue('name');
-				$firstName = $form->getValue('firstName');
-				$email = $form->getValue('email');				
-				$pw = $form->getValue('pw');		
+			if ($form->isValid($formData)) {					
+				$user = new User();
+				$user->setFirstName($form->getValue('firstName'));
+				$user->setPw($form->getValue('pw'));
+				$user->setName($form->getValue('name'));
+				$user->setEmail($form->getValue('email'));
+
 				$groups = $form->getValue('groups');
 				
-				$user = new User();
-				$user->setFirstName($firstName);
-				$user->setPw(md5($pw));
-				$user->setName($name);
-				$user->setEmail($email);
-								
 				foreach ($groups as $groupId) {
-					$group = $this->em->getRepository('Entities\Group')->findOneById($groupId);
+					$group = $this->groupRep->findOneById($groupId);
 					$user->addGroup($group);
 				}			
 				
@@ -59,7 +56,7 @@ class UserController extends Zend_Controller_Action
 		}
 		
 		$user = $this->userRep->findOneById($id);
-		$groups = $this->em->getRepository('Entities\Group')->findAll();
+		$groups = $this->groupRep->findAll();
 		$form = new Application_Form_Edit(array('groups'=>$groups, 'user' =>$user));		
 		
 		if ($this->getRequest()->isPost()) {
@@ -70,15 +67,15 @@ class UserController extends Zend_Controller_Action
 				$user->setFirstName($form->getValue('firstName'));
 				$user->setEmail($form->getValue('mail'));
 				 
-				if(!$form->getValue('pw') === null) {
-					$user->setPw(md5($form->getValue('pw')));
+				if($form->getValue('pw') != null) {
+					$user->setPw($form->getValue('pw'));
 				} 
 				
 				$user->removeAllGroups();
 				$groups = $form->getValue('groups');
 				
 				foreach ($groups as $gid) {					
-					$group = $this->em->getRepository('Entities\Group')->findOneById($gid);					
+					$group = $this->groupRep->findOneById($gid);					
 					$user->addGroup($group);
 				}
 												
@@ -120,8 +117,15 @@ class UserController extends Zend_Controller_Action
 	{			
 		$page = $this->getRequest()->getParam('page',0);
 		$searchValue = $this->getRequest()->getParam('search', null);
-						
-		$form = new Application_Form_Search();
+
+		$users = $this->userRep->findAll();
+		$source = array();
+		
+		foreach($users as $user) {
+			$source[] = $user->getEmail();
+		}
+		
+		$form = new Application_Form_Search(array('source' =>$source));
 		
 		if ($this->getRequest()->isPost()) {
 			$formData = $this->getRequest()->getPost();

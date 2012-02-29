@@ -47,10 +47,10 @@ class Group {
 	}
 	
 	public function removeAllUsers() {
-// 		/foreach($this->users as $user) {
-			//$user->removeGroup($this);
-		//}
-		$this->users = new ArrayCollection();		
+		foreach($this->users as $user) {
+			$user->removeGroup($this);
+		}
+		//$this->users = new ArrayCollection();		
 	}
 	
 	public function addUser(User $user) {

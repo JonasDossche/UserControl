@@ -27,15 +27,27 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		$classLoader->register();
 		$classLoader = new ClassLoader('Proxies', $doctrineConfig['directories']['proxies']);
 		$classLoader->register();
+		$classLoader = new ClassLoader('Plugins', $doctrineConfig['directories']['plugins']);
+		$classLoader->register();
 		
 		
 		return $autoloader;
 	}
 	
+	protected function _initViewHelpers()
+	{
+		$view = new Zend_View();
+		$viewRenderer = new Zend_Controller_Action_Helper_ViewRenderer();
+	
+		$view->addHelperPath('ZendX/JQuery/View/Helper/', 'ZendX_JQuery_View_Helper');
+		$viewRenderer->setView($view);
+		Zend_Controller_Action_HelperBroker::addHelper($viewRenderer);
+	}
+	
 	public function _initRegisterPlugins() {
 		//Register plugin
 		$controller = Zend_Controller_Front::getInstance();
-		$controller->registerPlugin(new Plugin_Auth());
+		$controller->registerPlugin(new Plugins\Auth());
 		return $controller;
 	}
 	

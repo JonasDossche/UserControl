@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<?php 
+	echo $this->jQuery()
+	->setVersion('1.7.1')
+	->setUiVersion('1.8.1')
+	->addStylesheet('http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/smoothness/jquery-ui.css')	
+	->enable()
+	->uiEnable();
+	?>
     <title>UserControl System</title> 
     <script>
     var users;
@@ -63,16 +71,21 @@
 	       		j++;
 	       	}
     	}
-    }
-        
-    
-    
-  
+    }  
     </script>   
     <style>
 		body {
 			Font-family: Calibri, Verdana, Ariel, sans-serif;	
 		}
+		
+		ul li {
+			list-style: none;	
+		}
+		
+		ul li.ui-autocomplete {
+			width: 200px;	
+		}
+		
 		
 		ul#menu {
 			width: 600px;

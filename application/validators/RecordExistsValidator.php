@@ -21,7 +21,7 @@ class RecordExistsValidator extends Zend_Validate_Abstract
 	 
 	public function isValid($value)
 	{	
-		if(call_user_func(array($this->er,'findOneBy' . $this->column), $value) == null) {
+		if($this->er->{'findOneBy'.$this->column}($value) == null) {
 			$this->_error(self::RECORD_NOT_EXISTS);
 			return false;	
 		}

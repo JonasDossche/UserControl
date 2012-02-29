@@ -25,7 +25,7 @@ class UserRepository extends EntityRepository
 		$qb->where('u.mail = :mail')
 		   ->andWhere('u.pw = :pw')
 		   ->setParameter('mail', $mail)
-		   ->setParameter('pw', $pw);
+		   ->setParameter('pw', md5($pw));
 		
 		return $qb->getQuery()->getSingleResult();	
 	}
